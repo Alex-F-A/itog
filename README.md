@@ -6,9 +6,9 @@
 ### Конфигурационные файлы:
 - variables.tf - файл с переменными инраструктуры terraform
   критичные реквизиты подключения к облаку берутся из системных переменных
-  variable "yandex_cloud_token" {}
-  variable "yandex_cloud_id" {}
-  variable "yandex_folder_id" {}
+  - variable "yandex_cloud_token" {}
+  - variable "yandex_cloud_id" {}
+  - variable "yandex_folder_id" {}
 
 - providers.tf -  файл с описанием используемого провайдера и его реквизитами;
 - resources.tf - основной файл с описанием всех создаваемых ресурсов облака, файл последовательно описывает:
