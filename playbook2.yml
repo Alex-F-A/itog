@@ -1,0 +1,67 @@
+---
+#second deploing kibana, filebeat 
+- name: deploing kibana srv
+  hosts: kibana
+  remote_user: ubuntu-user
+  become: yes
+  gather_facts: false
+  tasks:
+  - name: Set timezone to Europe/Moscow
+    community.general.timezone:
+      name: "Europe/Moscow"
+
+  - name: inatall kibana from internet
+    apt:
+      deb: https://mirror.yandex.ru/mirrors/elastic/8/pool/main/k/kibana/kibana-8.15.0-amd64.deb
+
+  - name: Copy kibana conf #true
+    ansible.builtin.copy:
+      src: "./kibana.yml"
+      dest: /etc/kibana/kibana.yml
+      mode: '0664'
+
+  - name:  restart kibana
+    service:
+      name: kibana
+      state: restarted
+      enabled: yes
+      
+- name: deploing Filebeat srv
+  hosts: websrv
+  remote_user: ubuntu-user
+  become: yes
+  gather_facts: false
+  tasks:
+  - name: Set timezone to Europe/Moscow
+    community.general.timezone:
+      name: "Europe/Moscow"
+
+  - name: install filebeat from internet
+    apt:
+      deb: https://mirror.yandex.ru/mirrors/elastic/8/pool/main/f/filebeat/filebeat-8.16.0-amd64.deb
+
+  - name: Copy filebeatconf #true
+    ansible.builtin.copy:
+      src: ./filebeat.yml
+      dest: /etc/filebeat/filebeat.yml
+      mode: '0644'
+
+  - name: enable module nginx
+    shell: |
+      filebeat modules enable nginx
+
+  - name: Copy filebeat ngix conf #true
+    ansible.builtin.copy:
+      src: "./nginx.yml"
+      dest: /etc/filebeat/modules.d/nginx.yml
+      mode: '0644'
+
+#  - name: filebeat init
+#    shell: |
+#      filebeat setup
+
+  - name: restart filebeat
+    service:
+      name: filebeat
+      state: restarted
+      enabled: yes
